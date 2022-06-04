@@ -23,7 +23,7 @@ def register():
     form=RegistrationForm(request.form)
     if request.method=='POST' and form.validate():
         hashed_password=bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user=User(id=form.RollNo.data,username=form.userName.data,email=form.emailId.data,password=hashed_password)
+        user=User(username=form.userName.data,email=form.emailId.data,password=hashed_password)
         db.session.add(user)
         db.session.commit()
         flash("Account created successfully ,you may login now!",'success')
@@ -33,9 +33,7 @@ def register():
 @app.route('/login',methods=['GET','POST'])
 def login():
     if current_user.is_authenticated:
-        if(current_user.id==205121082):
-            pass
-        return render_template('index.html',login=False,post="Hello "+ current_user.username + ", Welcome to INNOVAC'22")
+        return render_template('index.html',login=False,post="Hello "+ current_user.username + ", Welcome to PEER_BLOG")
     form=LoginForm(request.form)
     if request.method=='POST' and form.validate():
         user=User.query.filter_by(email=form.emailId.data).first()
@@ -53,92 +51,92 @@ def logout():
     logout_user()
     return redirect(url_for('hello'))
 
-@app.route('/media')
-@login_required
-def media():
-    return render_template('home.html',user=current_user.id) 
-@app.route('/feed')
-def feed():
-    P=Posts.query.with_entities(Posts.id).all()
-    P.reverse()
-    p=dict()
-    for i in P:
-        post=Posts.query.filter_by(id=i[0]).first()
-        if(post.appr==1):
-            a=[]
-            a.append(post.caption)
-            a.append(post.username)
-            a.append(post.roll_no)
-            picname='uploads/'+post.pic
-            p[picname]=a
-    print(current_user.id)
-    return render_template('feed.html',dict=p,cid=current_user.id)
+# @app.route('/media')
+# @login_required
+# def media():
+#     return render_template('home.html',user=current_user.id) 
+# @app.route('/feed')
+# def feed():
+#     P=Posts.query.with_entities(Posts.id).all()
+#     P.reverse()
+#     p=dict()
+#     for i in P:
+#         post=Posts.query.filter_by(id=i[0]).first()
+#         if(post.appr==1):
+#             a=[]
+#             a.append(post.caption)
+#             a.append(post.username)
+#             a.append(post.roll_no)
+#             picname='uploads/'+post.pic
+#             p[picname]=a
+#     print(current_user.id)
+#     return render_template('feed.html',dict=p,cid=current_user.id)
 
 
 
-@app.route('/upload')
-def upload():
-    return render_template('upload.html')
+# @app.route('/upload')
+# def upload():
+#     return render_template('upload.html')
 
-@app.route('/adminfeed')
-@login_required
-def adfeed():
-    P=Posts.query.with_entities(Posts.id).all()
-    P.reverse()
-    print(P)
-    p=dict()
-    for i in P:
-        post=Posts.query.filter_by(id=i[0]).first()
-        print(post.id)
-        a=[]
-        a.append(post.caption)
-        a.append(post.username)
-        a.append(post.roll_no)
-        apr=False
-        if(post.appr==1):
-            apr=True
-        a.append(apr)
-        picname='uploads/'+post.pic
-        p[picname]=a
-    print(p)
-    return render_template('admin.html',dict=p)
+# @app.route('/adminfeed')
+# @login_required
+# def adfeed():
+#     P=Posts.query.with_entities(Posts.id).all()
+#     P.reverse()
+#     print(P)
+#     p=dict()
+#     for i in P:
+#         post=Posts.query.filter_by(id=i[0]).first()
+#         print(post.id)
+#         a=[]
+#         a.append(post.caption)
+#         a.append(post.username)
+#         a.append(post.roll_no)
+#         apr=False
+#         if(post.appr==1):
+#             apr=True
+#         a.append(apr)
+#         picname='uploads/'+post.pic
+#         p[picname]=a
+#     print(p)
+#     return render_template('admin.html',dict=p)
 
 
-@app.route('/uploader',methods=['GET','POST'])
-@login_required
-def uploader():
-    file = request.files['inputFile']
-    #name tag of form
-    roll_no = current_user.id
-    caption=request.form['caption']
-    username=current_user.username
-    filename=str(roll_no)+'_'+file.filename
-    filename = secure_filename(filename)
+# @app.route('/uploader',methods=['GET','POST'])
+# @login_required
+# def uploader():
+#     file = request.files['inputFile']
+#     #name tag of form
+#     roll_no = current_user.id
+#     caption=request.form['caption']
+#     username=current_user.username
+#     filename=str(roll_no)+'_'+file.filename
+#     filename = secure_filename(filename)
   
-    if file and allowed_file(file.filename):
-       file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+#     if file and allowed_file(file.filename):
+#        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
   
-       newFile = Posts(pic=filename, roll_no=roll_no,caption=caption,username=username)
-       db.session.add(newFile)
-       db.session.commit()
-    #    flash('File successfully uploaded ' + file.filename + ' to the database!')
-       return redirect(url_for('feed'))
-    # else:
-    #    flash('Invalid Uplaod only txt, pdf, png, jpg, jpeg, gif') 
-    return redirect(url_for('feed'))
+#        newFile = Posts(pic=filename, roll_no=roll_no,caption=caption,username=username)
+#        db.session.add(newFile)
+#        db.session.commit()
+#     #    flash('File successfully uploaded ' + file.filename + ' to the database!')
+#        return redirect(url_for('feed'))
+#     # else:
+#     #    flash('Invalid Uplaod only txt, pdf, png, jpg, jpeg, gif') 
+#     return redirect(url_for('feed'))
       
-@app.route('/review/<picid>',methods=['GET','POST']) 
-@login_required
-def approve(picid):
-    p=Posts.query.filter_by(pic=picid).first()
-    p.appr=1
-    db.session.commit()
-    return redirect(url_for('adfeed'))
+# @app.route('/review/<picid>',methods=['GET','POST']) 
+# @login_required
+# def approve(picid):
+#     p=Posts.query.filter_by(pic=picid).first()
+#     p.appr=1
+#     db.session.commit()
+#     return redirect(url_for('adfeed'))
 
-@app.route('/remove/<picid>',methods=['GET','POST']) 
-@login_required
-def remove(picid):
-    p=Posts.query.filter_by(pic=picid).first()
-    p.appr=0
-    db.session.commit()
-    return redirect(url_for('adfeed'))
+# @app.route('/remove/<picid>',methods=['GET','POST']) 
+# @login_required
+# def remove(picid):
+#     p=Posts.query.filter_by(pic=picid).first()
+#     p.appr=0
+#     db.session.commit()
+#     return redirect(url_for('adfeed'))
