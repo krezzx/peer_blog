@@ -17,7 +17,7 @@ app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///userData.db'
 app.config['SQLALCHEMY_BINDS']={
     'posts':'sqlite:///posts.db',
     'comment':'sqlite:///comment.db',
-    'vote':'sqlite:///vite.db'
+    'vote':'sqlite:///vote.db'
 }
 
 app.config['SQLALCHEMY_TRACK_MODIFICATION'] = False 
@@ -40,7 +40,7 @@ class User(db.Model,UserMixin):
     username=db.Column(db.String(20),nullable=False,unique=True)
     email=db.Column(db.String(120),nullable=False)
     password=db.Column(db.String(60),nullable=False)
-    colleague=db.Column(db.String(500),default=" ")
+    colleague=db.Column(db.String(500),default=",")
     def __repr__(self):
         return f"User('{self.id}','{self.username}','{self.email}')"
 

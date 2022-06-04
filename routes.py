@@ -1,3 +1,4 @@
+from re import I
 from forms import RegistrationForm,LoginForm
 from flask import render_template,flash,redirect,url_for,request
 from app import db,bcrypt,app,User,Posts
@@ -145,3 +146,35 @@ def logout():
 @login_required
 def feed():
     return render_template('home.html',user=current_user.username)
+
+
+@app.route('/colleague')
+@login_required
+def colleague():
+    P=User.query.all()
+    dict1={}
+    for i in P:
+        if(i.id!=current_user.id):
+            a=current_user.colleague
+            l=a.split(',')
+            print(l)
+            if(str(i.id) not in l):
+                ar=[]
+                ar.append(i.username)
+                ar.append(i.email)
+                dict1[i.id]=ar
+    return render_template('colleague.html',d=dict1)
+
+@app.route('/addcol/<identity>',methods=['GET','POST'])
+@login_required
+def addcol(identity):
+    P=User.query.filter_by(id=current_user.id).first()
+    print(P.colleague)
+    i=P.colleague+str(identity)+','
+    print(i)
+    P.colleague=i
+    db.session.commit()
+
+    return redirect(url_for('colleague'))
+
+
