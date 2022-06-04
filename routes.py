@@ -140,3 +140,8 @@ def logout():
 #     p.appr=0
 #     db.session.commit()
 #     return redirect(url_for('adfeed'))
+
+@app.route('/media')
+@login_required
+def feed():
+    return render_template('home.html',user=current_user.id)
