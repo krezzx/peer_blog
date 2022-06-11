@@ -177,4 +177,39 @@ def addcol(identity):
 
     return redirect(url_for('colleague'))
 
+@app.route('/uploader',methods=['GET','POST'])
+@login_required
+def upload():
+    uid = current_user.id
+    username=current_user.username
+    caption=request.form['caption']
+    newFile = Posts(uid=uid,caption=caption,username=username)
+    db.session.add(newFile)
+    db.session.commit()
+    return redirect(url_for('profile'))
 
+@app.route('/profile',methods=['GET','POST'])
+@login_required
+def profile():
+    P=Posts.query.all()
+    d={}
+    for i in P:
+        if(i.uid==current_user.id):
+            ar=[]
+            ar.append(i.caption)
+            ar.append(i.username)
+            d[i.id]=ar
+    return render_template('profile.html',d=d)
+
+
+@app.route('/delete/<pid>',methods=['GET','POST'])
+@login_required
+def delete(pid):
+    P=Posts.query.filter_by(id=pid).first()
+    db.session.delete(P)
+   
+    db.session.commit()
+
+    return redirect(url_for('profile'))
+
+    

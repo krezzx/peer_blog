@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h4>EDIT YOUR POST</h4>
+<form action="{{url_for('edited',pid=p)}}",method='POST'>
+    
+    <div class="form-group">
+        <label for="caption1">EDIT</label>
+        <input type="textarea" class="form-control" id="caption1" name="caption1">
+    </div>
+    <input type="submit" name="submit" value="EDIT" class="btn btn-secondary">
+  </form>
+
+{% endblock %}

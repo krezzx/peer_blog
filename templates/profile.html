@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="card w-75">
+    <div class="card-body">
+        <form method="post" action="{{url_for('upload')}}">
+            <div class="form-group">
+                <label for="caption">ENTER</label>
+                <input type="textarea" class="form-control" id="caption" name="caption" placeholder="Write Something . . . .">
+            </div>
+            <br>
+            <input type="submit" value="SUBMIT" class="btn btn-secondary btn-lg btn-block">
+        </form>
+    </div>
+  </div>
+    <br>
+    <br>
+    
+<div class="alert alert-primary w-75" role="alert">
+    YOUR POSTS
+  </div>
+    {% for id,arr in d.items() %}
+        <div class="card w-50">
+            <div class="card-body">
+              <h5 class="card-title">{{arr[1]}}</h5>
+              <p class="card-text">{{arr[0]}}</p>
+              <form action="{{url_for('delete',pid=id)}}",method='post'>
+                <input type="submit" name="submit" value="DELETE" class="btn btn-secondary">
+            </form>
+            <br>
+
+            </div>
+          </div>
+
+
+    <br>
+    <br>
+   
+    {% endfor %}
+{% endblock %}
