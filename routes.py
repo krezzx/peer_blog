@@ -148,10 +148,14 @@ def feed():
     P=Posts.query.all()
     d={}
     for i in P:
-        ar=[]
-        ar.append(i.caption)
-        ar.append(i.username)
-        d[i.id]=ar
+        G=User.query.filter_by(id=i.uid).first()
+        collist=G.colleague
+        collist=collist.split(',')
+        if(str(current_user.id) in collist):
+            ar=[]
+            ar.append(i.caption)
+            ar.append(i.username)
+            d[i.id]=ar
     return render_template('home.html',d=d,user=current_user.username)
 
 
