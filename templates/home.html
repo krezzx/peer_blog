@@ -1,8 +1,33 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>HOME PAGE</h1>
-<p>User is {{user}}</p>
+<h1 class="text-white">HOME PAGE</h1>
+<p class="text-white">User is {{user}}</p>
+<br>
+<br>
+<div class="alert alert-primary w-75" role="alert">
+    YOUR POSTS
+  </div>
+
+    {% for id,arr in d.items() %}
+    <div class="col d-flex justify-content-center">
+        <div class="card w-50">
+            <div class="card-body">
+              <h5 class="card-title">{{arr[1]}}</h5>
+              <p class="card-text">{{arr[0]}}</p>
+            <br>
+            <div class="text-center">
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+            </div>
+          </div>
+        </div>
+
+    <br>
+    <br>
+    
+   
+    {% endfor %}
 
 
 {% endblock %}

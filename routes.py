@@ -145,7 +145,14 @@ def logout():
 @app.route('/feed')
 @login_required
 def feed():
-    return render_template('home.html',user=current_user.username)
+    P=Posts.query.all()
+    d={}
+    for i in P:
+        ar=[]
+        ar.append(i.caption)
+        ar.append(i.username)
+        d[i.id]=ar
+    return render_template('home.html',d=d,user=current_user.username)
 
 
 @app.route('/colleague')
